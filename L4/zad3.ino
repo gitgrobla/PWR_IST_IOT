@@ -31,16 +31,23 @@ void setup()
 
 void printOnScreen(String t)
 {
-    lcd.setCursor(15, 0);
-    lcd.write(byte(0));
+    static String currentText = ""; // Store the current displayed text
     lcd.setCursor(0, 0);
-    lcd.print(t);
+
+    if (t != currentText)
+    {
+        // Clear the line and print the new text only if it's different
+        lcd.print("                "); // 16 spaces to clear the line
+        lcd.setCursor(0, 0);
+        lcd.print(t);
+        currentText = t;
+    }
 }
 
 void loop()
 {
     int value = analogRead(POTENTIOMETER);
-    int realValue = min(max(0, value - 10), 1003);
+    float voltage = (float)value * 5.0 / 1023.0;
 
     const unsigned long printPeriod = 100UL;
     static unsigned long lastPrint = 0UL;
@@ -48,6 +55,6 @@ void loop()
     if (millis() - lastPrint >= printPeriod)
     {
         lastPrint += printPeriod;
-        printOnScreen(String(value) + " : " + String(realValue));
+        printOnScreen(String(value) + " ::: " + String(voltage) + "V");
     }
 }
